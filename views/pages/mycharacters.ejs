@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../public/style.css">
+
+</head>
+<body>
+    <header>
+        <header>
+            <nav>
+                <a href="/home">home</a>
+                <a href="/my-characters">My characters</a>
+    
+            </nav>
+        </header>
+    
+    </header>
+    <%result.forEach(value=>{%>
+        <h1>Name: <%=value.name%></h1>
+        <h1>patronus: <%=value.patronus%></h1>
+        <h1>Alive: <%=value.alive%></h1>
+        <a href="/character/<%=value.id%>">View character</a>
+        <%})%>
+</body>
+</html>

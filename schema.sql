@@ -1,0 +1,6 @@
+CREATE TABLE potter_api(
+id SERIAL PRIMARY KEY NOT NULL,
+name VARCHAR(255),
+patronus VARCHAR(255),
+alive VARCHAR(255)
+)
