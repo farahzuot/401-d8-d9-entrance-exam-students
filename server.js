@@ -50,6 +50,7 @@ app.get('/my-characters', favPage);
 app.get('/character/:id', detailsFunc);
 app.put('/character/:id', updateFunc);
 app.delete('/character/:id', deleteFunc);
+app.use('*', errorHandler);
 
 
 
@@ -73,8 +74,7 @@ function homeHandler(req, res) {
 
 function charachtersFunc(req, res) {
   let house;
-  //let names = ['gryffindor', 'hufflepuff', 'ravenclaw', 'slytherin'];
-  //console.log(req.body);
+
   if (req.body.house === 'gryffindor') {
     house = 'gryffindor';
   } else if (req.body.house === 'hufflepuff') {
@@ -89,56 +89,57 @@ function charachtersFunc(req, res) {
   const url = `http://hp-api.herokuapp.com/api/characters/house/${house}`;
   let charArr = [];
   superagent.get(url).then(data => {
-    //res.send(data.body);
     data.body.forEach(element => {
-      //console.log(element.patronus);
       charArr.push(new Character(element));
-      res.render('pages/house', { data: charArr , houseName:house});
+      res.render('pages/house', { data: charArr, houseName: house });
     });
-    //console.log(charArr);
   }).catch(console.error);
 
 }
 
 function FavFunc(req, res) {
   const sql = 'INSERT INTO potter_api (name,patronus,alive) VALUES ($1,$2,$3);';
-  const values=[req.body.Name,req.body.patronus,req.body.Alive];
-  client.query(sql,values).then(data=>{
+  const values = [req.body.Name, req.body.patronus, req.body.Alive];
+  client.query(sql, values).then(() => {
     res.redirect('/my-characters');
-  });
+  }).catch(console.error);
 }
 
-function favPage(req,res){
+function favPage(req, res) {
   const sql = 'SELECT * FROM potter_api;';
-  client.query(sql).then(data=>{
-    res.render('pages/mycharacters', {result: data.rows});
-  });
+  client.query(sql).then(data => {
+    res.render('pages/mycharacters', { result: data.rows });
+  }).catch(console.error);
 }
 
-function detailsFunc(req,res){
+function detailsFunc(req, res) {
   const id = [req.params.id];
   const sql = 'SELECT * FROM potter_api WHERE id=$1;';
-  client.query(sql,id).then(data=>{
-    res.render('pages/details',{data:data.rows[0]});
-  });
+  client.query(sql, id).then(data => {
+    res.render('pages/details', { data: data.rows[0] });
+  }).catch(console.error);
 }
 
-function updateFunc(req,res){
+function updateFunc(req, res) {
   const id = req.params.id;
   const sql = 'UPDATE potter_api SET name=$1,patronus=$2,alive=$3 WHERE id=$4;';
-  const values = [req.body.name, req.body.patronus , req.body.alive , id];
-  client.query(sql,values).then(()=>{
+  const values = [req.body.name, req.body.patronus, req.body.alive, id];
+  client.query(sql, values).then(() => {
     res.redirect('/my-characters');
-  });
+  }).catch(console.error);
 
 }
 
-function deleteFunc(req,res){
+function deleteFunc(req, res) {
   const id = [req.params.id];
   const sql = 'DELETE FROM potter_api WHERE id=$1;';
-  client.query(sql,id).then(()=>{
+  client.query(sql, id).then(() => {
     res.redirect('/my-characters');
-  });
+  }).catch(console.error);
+}
+
+function errorHandler(req, res) {
+  res.status(404).send('404 NOT FOUND!');
 }
 // -----------------------------------
 // --- CRUD Pages Routes functions ---
